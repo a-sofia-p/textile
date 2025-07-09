@@ -1,4 +1,4 @@
-# Textile Waste Analysis: a look at textile waste using GIS and network analysis   
+# Global Textile Waste: a GIS-spatial analysis  
 
 Countries that export large amounts of textile waste are often major producers and consumers of textiles, generating significant waste domestically. Exporting waste can indicate a lack of domestic recycling or disposal infrastructure, or a preference to offload waste management responsibilities to other nations—often less affluent countries with weaker environmental regulations. This practice, sometimes termed "waste colonialism," allows exporting countries to appear more sustainable domestically while shifting the environmental burden abroad
 
