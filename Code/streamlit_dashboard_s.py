@@ -1,20 +1,3 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import folium
-from streamlit_folium import st_folium
-from streamlit.components.v1 import html
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-import plotly.io as pio
-import plotly.express as px
-from folium import features
-from geopy.geocoders import Nominatim
-import time
-import json
-import requests
-from folium.plugins import AntPath
-
 st.set_page_config(layout="wide")
 
 business_palette = [
@@ -167,11 +150,9 @@ with tab1:
                 nuances of the underregulated global market. 
                 Through engaging visualizations and storytelling, the user can explore waste and trading networks, consumer behaviour, and the 
                 spatial relation through interactive maps.  
-                Data was collected from a variety of second-hand references to <b><i>provide data-driven insight</i></b> on global textile trade and networks,
-                consumer behaviour, and waste exports/imports. 
-                highlight the major players fueling the industry, but also encourage reflection 
-                on how consumption patterns in a handful of nations can influence environmental and sustainability challenges 
-                experienced worldwide.
+                
+                Data was collected from a variety of second-hand sources, highlighting the major players in the industry, but also encourage reflection 
+                on how consumption and manufactoring in a handful of nations can impact the environment and sustainability challenges worldwide.
                 </p>
             </div>
             <div class="side-image">
@@ -203,18 +184,18 @@ with tab2:
     Inspiration for this project lies around 5,000 miles (8,000 kilometers) away from New York City, 
     in one of the oldest and driest deserts in the world – the Atacama Desert in northern Chile. 
     From a distance, mounts of clothing and textile scraps seemingly blend in with the dunes and dry hills in the landscape. 
-    From up close, bright colors begin to stand out from discarded ripped jeans, leather boots, heals and old bracelets 
+    From up close, bright colors begin to stand out from discarded clothing, shoes and accessories 
     against the warm desert sand.
 
     The *Cemetery of Clothes*, as the locals refer to it, is a reflection of the effects of overproduction, fast fashion 
     and a lack of policy regulations on the textile industry. An estimated **59,000 tons** of clothing and other textiles 
-    are imported to Chile each year, of which almost **40,000** deemed 
+    are imported to Chile each year, of which almost **40,000** are deemed 
     [irrecoverable](https://www.aljazeera.com/gallery/2021/11/8/chiles-desert-dumping-ground-for-fast-fashion-leftovers). 
     The growing piles permeate serious environmental impacts on the land, releasing toxic chemicals, like methane 
     and formaldehyde, and contaminating the ground with imparishable microplastics. Fast fashion clothing is mainly 
     made out of polyester (plastic), which is 
     [non-biodegradable](https://earth.org/fast-fashions-detrimental-effect-on-the-environment/). 
-    With no proper management nor supervision, The Cemetery also presents an inevitable fire hazard as it spreads 
+    With no proper management nor supervision, the cemetery also presents an inevitable fire hazard as it spreads 
     across 741 acres (300 hectares) of arid land.
                 """, unsafe_allow_html=True)
 
@@ -322,11 +303,11 @@ with tab4:
         #### APPAREL IMPORTS MAP ####
         if country_choice == "All":
 
-            #### apparel imports map ####
+            #### Apparel imports map ####
             st.markdown("---")
             st.markdown("<h2 style='text-align:center;'>Apparel Imports Trend Over Time</h2>", unsafe_allow_html=True)
 
-            apparel_imports_df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/apparel_imports.csv')
+            apparel_imports_df = pd.read_csv('https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/apparel_imports.csv')
             apparel_imports_df = apparel_imports_df[apparel_imports_df['Apparel_Imports'] > 0]
             df_no_world = apparel_imports_df[apparel_imports_df['Importers'] != 'World']
 
@@ -338,13 +319,13 @@ with tab4:
 
             df_no_world = df_no_world.groupby('Year').apply(highlight_top5).reset_index(drop=True)
 
-            # Define color scheme
+            # Color scheme
             color_map = {
                 'Top 5': 'rgba(163, 201, 168, 0.9)',  
                 'Other': 'rgba(217, 140, 95, 0.9)'     
             }
 
-            # Create Plotly choropleth
+            # Plotly choropleth
             fig = px.choropleth(
                 df_no_world,
                 locations='Importers',
@@ -363,7 +344,7 @@ with tab4:
                 height=800
             )
 
-            # Add custom hover template for better currency formatting
+            # Hover currency formatting template
             fig.update_traces(
                 customdata=np.stack((df_no_world['Apparel_Imports'], df_no_world['Year']), axis=-1),
                 hovertemplate=(
@@ -373,7 +354,7 @@ with tab4:
                 )
             )
 
-            # Apply geographic styling
+            # Geographic styling
             fig.update_geos(
                 fitbounds='locations',
                 showcountries=True,
@@ -410,20 +391,14 @@ with tab4:
 
             st.plotly_chart(fig, use_container_width=True)
 
-            # st.markdown('''The map above illustrates the total value of apparel imports (in thousands of US dollars) by country, 
-            #             including crocheted and knitted apparel, not crocheted and knitted apparel as well as other made up textiles articles. 
-            #             The top five importing countries, the United States, France, Germany, the United Kingdom, and Japan, are highlighted in 
-            #             yellow, consistently ranking as the largest importers of apparel from 2005 to the present. The varying shades of blue are 
-            #             due to missing data.''')
-
-            st.markdown('''This map spotlights the world’s top apparel importers, highlighting the United States, France, Germany, the United Kingdom, 
-            and Japan as the five countries bringing in the highest value of apparel goods (measured in thousands of US dollars). 
+            st.markdown('''This map spotlights the world’s top five apparel importers, United States, France, Germany, the United Kingdom, and Japan, 
+            as the five countries bringing in the highest value of apparel goods (measured in thousands of US dollars). 
             Understanding which countries dominate apparel imports is crucial because it not only reveals where global demand is 
             concentrated, but also which economies drive the production and movement of clothing worldwide. The international flow of 
             apparel is one of many crucial factors that shape the global textile and apparel industry, impacting everything from [manufacturing locations](https://www.royaleuropetextile.com/top-10-textile-manufacturing-countries-in-the-world-fy-2024-update/) 
             to labor practices and environmental sustainabilty.''')
         
-            ### time series line graph ###
+            ### Time series line graph ###
             top_countries = ['United States of America', 'France', 'Japan', 'Germany', 'United Kingdom'] 
             country_colors = {
                 'United States of America': '#3A506B',
@@ -449,7 +424,7 @@ with tab4:
                     )
                 )
 
-            # Apply the exact same layout as your reference code
+            # Applying layout reference code
             fig.update_layout(
                 title=dict(
                     text='<b>Apparel Imports Evolution for Top 5 Countries</b>',
@@ -494,25 +469,16 @@ with tab4:
             st.markdown('''The significance of tracking apparel imports goes beyond trade statistics. High import volumes are closely tied 
             to patterns of mass consumption, “fast fashion,” and the environmental footprint of the apparel industry. Research shows 
             that consumption rates in developed economies like the US and Western Europe have a profound impact on global greenhouse gas [emissions](https://dash.harvard.edu/entities/publication/191f53b7-acf6-424a-a306-b006b8a4e3f3), 
-            immense textile [waste generation](https://www.fibre2fashion.com/industry-article/10157/sustainability-challenges-in-the-global-textile-industry-analysing-waste-management-and-resource-eff), and resource use throughout the textile value chain. The demand from these top importers fuels production surges in 
-            manufacturing hubs, often in developing countries (see importers/exporters network graphs below), amplifying the industry’s challenges with sustainability, 
-            waste, and social responsibility.''')
-
+            immense textile [waste generation](https://www.fibre2fashion.com/industry-article/10157/sustainability-challenges-in-the-global-textile-industry-analysing-waste-management-and-resource-eff), and resource use throughout the textile value chain. The demand from these top importers fuels production 
+            surges in manufacturing hubs, often in developing countries (see importers/exporters network graphs below), amplifying the industry’s challenges 
+            with sustainability, waste, and social responsibility.''')
 
             st.markdown("---")
             st.markdown("<h2 style='text-align:center;'>Consumer Behavior</h2>", unsafe_allow_html=True)
 
-            # st.markdown('''We decided to analyse consumer interest in fast fashion versus more sustainable alternatives by focusing on the top five apparel-importing countries and using Google search trends as a proxy for consumer demand.''')
-            # st.write('''For each country, we compared search volumes for leading fast fashion brands with terms representing second-hand and 
-            #          more sustainable shopping options. To ensure relevance, we tailored the keywords and brand selections to reflect the most 
-            #          commonly used terms and popular platforms in each country.''')
-            # st.markdown("""
-            # - For Japan, for example, we conducted searches using the Japanese equivalents of “thrift” and “Shein,” then translated the results for consistency in our analysis.
-            # """)
 
             ##### ALL google search trends map #####
             def load_country_df(filename, country, keyword_cols):
-                #google_filepath = '/Users/graceliu/Desktop/Columbia/Spring2025/data_visualization/final_project/Consumer_Google_Search/'
                 df = pd.read_csv(filename, encoding='latin1')
                 df.rename(columns={'Month': 'Date'}, inplace=True)
                 df['Country'] = country
@@ -520,11 +486,11 @@ with tab4:
                 return df
 
             dfs = [
-                load_country_df('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/UK.csv', 'UK', ['Boohoo', 'Charity Shop']),
-                load_country_df('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/US.csv', 'US', ['Shein', 'Thrift']),
-                load_country_df('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/France.csv', 'France', ['Shein', 'Friperie']),
-                load_country_df('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/Germany.csv', 'Germany', ['Shein', 'Flohmarkt']),
-                load_country_df('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/Japan.csv', 'Japan', ['Shein', 'Thrift']),
+                load_country_df('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_UK.csv?plain=1', 'UK', ['Boohoo', 'Charity Shop']),
+                load_country_df('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_US.csv?plain=1', 'US', ['Shein', 'Thrift']),
+                load_country_df('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_France.csv?plain=1', 'France', ['Shein', 'Friperie']),
+                load_country_df('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_Germany.csv?plain=1', 'Germany', ['Shein', 'Flohmarkt']),
+                load_country_df('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_Japan.csv?plain=1', 'Japan', ['Shein', 'Thrift']),
             ]
             df = pd.concat(dfs, ignore_index=True)
 
@@ -701,20 +667,6 @@ with tab4:
                proxy measure of consumer demand, it provides a relatively good understanding of what kinds of brands are driving
                 global trends in sustainable vs. fast fashion.''')
 
-            # st.write('''While Google search trends provide a practical way to approximate consumer interest, 
-            #          this method has several important limitations:''')
-            # st.markdown("""
-            # - Search data can be biased, particularly when comparing online-only brands to brick-and-mortar alternatives, 
-            #             as consumer discovery and engagement differ between digital and physical retail.
-            # - Trends reflect search intent & curiosity —- not purchasing behavior.
-            # - Increasing internet access and growth of e-commerce over time can distort long-term trends, 
-            #             especially in the earlier years of the dataset.
-            # - Some brands, like Shein (founded in 2008), did not exist before certain dates, so search interest prior to their 
-            #             launch is not meaningful and has been excluded from our analysis.
-            # """)
-            # st.write('''Despite these caveats, Google search data offers a useful - if imperfect - means of gauging shifts 
-            #          in consumer interest between fast fashion and more sustainable shopping options over time.''')
-
             st.markdown("""
             <div style="
                 background-color: rgba(255, 255, 255, 0.75); 
@@ -751,7 +703,7 @@ with tab4:
         </div>
         """, unsafe_allow_html=True)
 
-        df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/US.csv', encoding='latin1')
+        df = pd.read_csv('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_US.csv?plain=1', encoding='latin1')
         df.rename(columns={'Month': 'Date'}, inplace=True)
         keyword_cols = ['Shein', 'Thrift']
 
@@ -895,7 +847,7 @@ with tab4:
         </div>
         """, unsafe_allow_html=True)
 
-        df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/France.csv', encoding='latin1')
+        df = pd.read_csv('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_France.csv?plain=1', encoding='latin1')
         df.rename(columns={'Month': 'Date'}, inplace=True)
         keyword_cols = ['Shein', 'Friperie']
 
@@ -1038,8 +990,7 @@ with tab4:
         </div>
         """, unsafe_allow_html=True)
 
-        #germany_google = '/Users/graceliu/Desktop/Columbia/Spring2025/data_visualization/final_project/Consumer_Google_Search/Germany.csv'
-        df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/Germany.csv', encoding='latin1')
+        df = pd.read_csv('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_Germany.csv?plain=1', encoding='latin1')
         df.rename(columns={'Month': 'Date'}, inplace=True)
         keyword_cols = ['Shein', 'Flohmarkt'] 
 
@@ -1183,8 +1134,7 @@ with tab4:
         </div>
         """, unsafe_allow_html=True)
 
-        #japan_google = '/Users/graceliu/Desktop/Columbia/Spring2025/data_visualization/final_project/Consumer_Google_Search/Japan.csv'
-        df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/Japan.csv', encoding='latin1')
+        df = pd.read_csv('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_Japan.csv?plain=1', encoding='latin1')
         df.rename(columns={'Month': 'Date'}, inplace=True)
         keyword_cols = ['Shein', 'Thrift']  # Keywords for Japan: シーイン is Shein and 古着 is Thrift
 
@@ -1328,8 +1278,7 @@ with tab4:
         </div>
         """, unsafe_allow_html=True)
 
-        #uk_google = '/Users/graceliu/Desktop/Columbia/Spring2025/data_visualization/final_project/Consumer_Google_Search/UK.csv'
-        df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Consumer_Google_Search/UK.csv', encoding='latin1')
+        df = pd.read_csv('https://github.com/a-sofia-p/textile/blob/main/Data/GoogleSearch_UK.csv?plain=1', encoding='latin1')
         df.rename(columns={'Month': 'Date'}, inplace=True)
         keyword_cols = ['Boohoo', 'Charity Shop']  
 
@@ -1513,7 +1462,7 @@ with tab4:
             box-shadow: 0 0 10px rgba(0,0,0,0.2); 
             font-size: 16px;
         ">
-        It is important to note that our waste categories represent a mere fraction of the total textile waste generated across select countries. In reality, this snapshot does not account for the plethora of different kinds of textile waste that exists in landfills. Nevertheless, our estimates provide a robust and reliable comparison using available data.
+        It is important to note that these waste categories represent a mere fraction of the total textile waste generated. The data does not account for the plethora of different kinds of textile waste that exists in landfills. Nevertheless, these estimates can provide a good idea of the magnitude and composition of the clothing waste exported from leading countries that are destined for resale, reuse or recycle to other countries.
         </div>
         """, unsafe_allow_html=True)
 
@@ -1554,11 +1503,10 @@ with tab4:
 #                     ''', unsafe_allow_html=True)
         
 
-        #exports_filepath = '/Users/graceliu/Desktop/Columbia/Spring2025/data_visualization/final_project/Worn clothing and other Export Data/'
         #Importing data
 
         #USA
-        path_usa = "https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/US%20clothing%20waste%20exports%202023.csv"
+        path_usa = "https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/US%20clothing%20waste%20exports%202023.csv"
         df_usa = pd.read_csv(path_usa, sep=';')
         df_usa = df_usa.sort_values(by=['Quantity_exported_2023'], ascending=False)
         df_usa = df_usa.rename(columns={'Importers': 'country', 'Quantity_exported_2023': 'quantity_exported'})
@@ -1567,9 +1515,8 @@ with tab4:
         df_usa_s = df_usa[['country', 'quantity_exported']].iloc[1:11].sort_index()
         df_usa_s['quantity_exported'] = pd.to_numeric(df_usa_s['quantity_exported'], errors='coerce')
 
-
         #CHINA
-        path_china = "https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/China%20clothing%20waste%20exports%202023.csv"
+        path_china = "https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/China%20clothing%20waste%20exports%202023.csv"
         df_china = pd.read_csv(path_china, sep=";")
         df_china = df_china.sort_values(by=['quantity_exported'], ascending=False)
 
@@ -1577,9 +1524,8 @@ with tab4:
         df_china_s = df_china[['country', 'quantity_exported']].iloc[1:11].sort_index()
         df_china_s['quantity_exported'] = pd.to_numeric(df_china_s['quantity_exported'], errors='coerce')
 
-
         #INDIA
-        path_india = "https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/India%20clothing%20waste%20exports%202023.csv"
+        path_india = "https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/India%20clothing%20waste%20exports%202023.csv"
         df_india = pd.read_csv(path_india, sep=";")
         df_india = df_india.sort_values(by=['quantity_exported'], ascending=False)
 
@@ -1588,7 +1534,7 @@ with tab4:
         df_india_s['quantity_exported'] = pd.to_numeric(df_india_s['quantity_exported'], errors='coerce')
 
         #ITALY
-        path_italy = "https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/Italy%20clothing%20waste%20exports%202023.csv"
+        path_italy = "https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Italy%20clothing%20waste%20exports%202023.csv"
         df_italy = pd.read_csv(path_italy, sep=";")
         df_italy = df_italy.sort_values(by=['quantity_exported'], ascending=False)
 
@@ -1596,9 +1542,8 @@ with tab4:
         df_italy_s = df_italy[['country', 'quantity_exported']].iloc[0:10].sort_index()
         df_italy_s['quantity_exported'] = pd.to_numeric(df_italy_s['quantity_exported'], errors='coerce')
 
-
         # GERMANY
-        path_germany = "https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/Germany%20clothing%20waste%20exports%202023.csv"
+        path_germany = "https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Germany%20clothing%20waste%20exports%202023.csv"
         df_germany = pd.read_csv(path_germany, sep=";")
         df_germany = df_germany.sort_values(by=['quantity_exported'], ascending=False)
 
@@ -1617,7 +1562,7 @@ with tab4:
             ])
         )
 
-        df_coords = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/country_coordinates.csv')
+        df_coords = pd.read_csv('https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/country_coordinates.csv')
         coord_dict = df_coords.set_index('country')[['latitude', 'longitude']].T.to_dict()
 
         def get_coords(country):
@@ -1630,11 +1575,11 @@ with tab4:
             df['quantity_exported'] = pd.to_numeric(df['quantity_exported'], errors='coerce')
             return df
         
-        df_usa_s = load_and_subset("https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/US%20clothing%20waste%20exports%202023.csv", 'Importers', 'Quantity_exported_2023')
-        df_china_s = load_and_subset("https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/China%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
-        df_india_s = load_and_subset("https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/India%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
-        df_italy_s = load_and_subset("https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/Italy%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
-        df_germany_s = load_and_subset("https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Waste%20Export%20Data/Germany%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
+        df_usa_s = load_and_subset("https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/US%20clothing%20waste%20exports%202023.csv", 'Importers', 'Quantity_exported_2023')
+        df_china_s = load_and_subset("https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/China%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
+        df_india_s = load_and_subset("https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/India%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
+        df_italy_s = load_and_subset("https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Italy%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
+        df_germany_s = load_and_subset("https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Germany%20clothing%20waste%20exports%202023.csv", 'country', 'quantity_exported')
 
         origin_coords_usa = get_coords("United States")
         origin_coords_china = get_coords("China")
@@ -1764,7 +1709,7 @@ with tab4:
         m = create_map(origin_selection)
         st_folium(m, use_container_width=True, height=600)
 
-        st.markdown('''Here we see the total export value (in USD) of textile waste from the top five exporting countries: _United States of America, Germany, China, Italy, and India_. To reiterate, tracking waste export values is vital to cast light on the largest contributors to the global stream of textile waste, which environmentally and economically impacts exporters and importers alike.
+        st.markdown('''Here we see the total export value (in USD) of textile waste from the top five exporting countries: _United States of America, Germany, China, Italy, and India_. .
         ''')
 
         # st.markdown('''
@@ -1780,7 +1725,7 @@ with tab4:
         #          ''')
         
         ####### TEXTILE EXPORTS BAR GRAPH #######
-        textile_exp_df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Textile_Waste_Exports.csv')
+        textile_exp_df = pd.read_csv('https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Textile_Waste_AllCountries_Exports.csv')
 
         textile_exp_df = textile_exp_df[textile_exp_df['Exporter Country'] != 'World']
         textile_exp_df['Export Value (USD)'] = pd.to_numeric(textile_exp_df['Export Value (USD)'], errors='coerce').fillna(0)
@@ -1881,7 +1826,7 @@ with tab4:
         # ''')
 
         ##### top 5 textile waste exporters #####
-        textile_exp_df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Textile_Waste_Exports.csv')
+        textile_exp_df = pd.read_csv('https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Textile_Waste_AllCountries_Exports.csv')
 
         agg = textile_exp_df.groupby('Textile Type')['Export Value (USD)'].sum().reset_index()
 
@@ -1939,9 +1884,9 @@ with tab4:
         st.plotly_chart(fig)
 
         st.markdown('''The above chart measuring ‘Total Value per Textile Type,’ breaks down the global export value (in USD) for different categories of textile waste: 
-        _Worn Clothes, Used/New Rags, Wool Waste, and Silk Waste_. Interestingly, we see that worn clothes dominate textile waste exports by a significant margin, 
-        with a total export value exceeding \\$151 million. Used and new rags follow distantly at around \\$21.7 million, while wool waste and silk waste account 
-        for much smaller shares, at \\$3.7 million and \\$3.1 million, respectively.''')
+        _Worn Clothes, Used/New Rags, Wool Waste, and Silk Waste_. Interestingly, we see that worn clothes dominate textile waste exports by a significant 
+        margin, with a total export value exceeding \\$151 million. Used and new rags follow distantly at around \\$21.7 million, while wool waste and silk 
+        waste account for much smaller shares, at \\$3.7 million and \\$3.1 million, respectively.''')
 
         # st.markdown('''
         #         <h3>
@@ -1955,7 +1900,7 @@ with tab4:
 
         #### total export value per textile type ####
 
-        textile_exp_df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Textile_Waste_Exports.csv')
+        textile_exp_df = pd.read_csv('https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Textile_Waste_AllCountries_Exports.csv')
 
         countries = [
             'United States of America',
@@ -2210,7 +2155,7 @@ with tab4:
         ''')        
 
         ##### WASTE IMPORTERS #####
-        df = pd.read_csv('https://raw.githubusercontent.com/QMSS-G5063-2025/Group_I_TextileIndustry/refs/heads/main/final_project/Textile_Waste_Imports.csv')
+        df = pd.read_csv('https://raw.githubusercontent.com/a-sofia-p/textile/refs/heads/main/Data/Textile_Waste_AllCountries_Imports.csv')
 
         focus_countries = ['United States of America', 'China', 'Netherlands', 'Mexico', 'Russian Federation']
         df = df[df['Importer Country'].isin(focus_countries)]
